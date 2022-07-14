@@ -1,0 +1,11 @@
+<h1>Home</h1>
+<p>Projekt zur Bachelorarbeit mit dem Thema: </p>
+<h3>Entwicklung eines Miro-Plugins für das strukturierte Hinzufügen von Beiträgen mit mobilen Endgeräten</h3>
+<p>&nbsp;</p>
+<p>Join Session:</p>
+<div class="input-group">
+  <input class="form-control" type="number" [(ngModel)]="this.sessionId" />
+  <a *ngIf="this.sessionId != null" href="{{this.baseURL}}/board/{{this.sessionId}}" class="btn btn-primary">Join</a>
+
+</div>
+

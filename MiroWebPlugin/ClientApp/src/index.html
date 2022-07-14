@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+
+  <meta charset="UTF-8" />
+  <title>MiroWebPlugin</title>
+  <!-- Loads the Miro Web SDK -->
+  <script src="https://miro.com/app/static/sdk/v2/miro.js"></script>
+  <script type="text/javascript">
+    const { board } = window.miro;
+
+    async function init() {
+      board.ui.on("icon:click", async () => {
+        // --- get selected items
+        let selectedItems = await board.getSelection();
+
+        let itemArray = [];
+        for (const selectedItem of selectedItems) {
+          itemArray.push(selectedItem.id);
+        }
+        let sessionId = await post(itemArray);
+
+        await board.ui.openPanel({
+          url: "https://localhost:44488/session/" + sessionId
+        });
+      });
+    }
+
+    async function post(itemArray) {
+      let itemQuery = '';
+      let itemQuery = '';
+      if (itemArray.length > 0) {
+        itemQuery = '?ids=' + itemArray.join('&ids=');
+      }
+      let sessionId = '';
+      await fetch('https://localhost:44488/MiroWebPlugin/InitFields' + itemQuery, {
+        method: 'POST',
+        //body: item,
+        // --- todo: hier noch versuchen die Objecte direkt zu übergeben
+        headers: {
+          'Content-Type': 'application/JSON'
+        }
+      }).then(response => response.json()).then(data => {
+        sessionId = data;
+      });
+      return sessionId;
+    }
+
+    init();
+  </script>
+
+  <meta charset="utf-8" />
+  <title>MiroWebPlugin</title>
+  <base href="/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+</head>
+<body>
+  <app-root>Loading...</app-root>
+</body>
+</html>
