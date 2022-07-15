@@ -23,7 +23,7 @@ export class BoardAccessorComponent implements OnInit {
       this.id = +params["id"];
     });
 
-    this.miroSvc.loadSessionView().subscribe(data => {
+    this.miroSvc.loadSessionView(this.id).subscribe(data => {
       this.inputFields = data.inputFields;
     });
   }
@@ -31,7 +31,11 @@ export class BoardAccessorComponent implements OnInit {
   public addStickyNote(itemId: string, event: any) {
     let content = event.target.value;
     if (content !== '') {
-      this.miroSvc.addStickyNote(itemId, content);
+      this.miroSvc.addStickyNote(itemId, content, this.id).subscribe(success => {
+
+      }, error => {
+        console.log(error);
+      });;
     }
   }
 

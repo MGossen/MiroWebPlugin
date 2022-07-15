@@ -40,11 +40,12 @@ namespace MiroWebPlugin.Controllers
             return new NoContentResult();
         }
 
-        [HttpGet("[action]")]
-        public IActionResult LoadSessionViewModel()
+        [HttpGet("[action]/{sessionId:int}")]
+        public IActionResult LoadSessionViewModel(int sessionId)
         {
             var sessionViewModel = new SessionViewModel();
-            sessionViewModel.InputFields = _inputFieldProvider.GetLoadedInputFields();
+            sessionViewModel.SessionId = sessionId;
+            sessionViewModel.InputFields = _inputFieldProvider.GetLoadedInputFields(sessionId);
             return new ObjectResult(sessionViewModel);
         }
     }

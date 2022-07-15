@@ -18,20 +18,17 @@ export class MiroWebPluginService {
     return this.http.get<number>(this.baseUrl + 'MiroWebPlugin/CreateNewSession');
   }
 
-  public loadSessionView(): Observable<SessionViewModel> {
-    return this.http.get<SessionViewModel>(this.baseUrl + 'MiroWebPlugin/LoadSessionViewModel');
+  public loadSessionView(sessionId: number): Observable<SessionViewModel> {
+    return this.http.get<SessionViewModel>(this.baseUrl + 'MiroWebPlugin/LoadSessionViewModel/' + sessionId);
   }
 
-  public addStickyNote(itemId: string, content: string) {
+  public addStickyNote(itemId: string, content: string, sessionId : number) {
     let stickyNoteAddRequest = new StickyNoteAddRequest();
     
     stickyNoteAddRequest.text = content;
     stickyNoteAddRequest.parentId = itemId;
+    stickyNoteAddRequest.sessionId = sessionId;
     
-    this.http.put<StickyNoteAddRequest>(this.baseUrl + 'MiroWebPlugin/AddStickyNote', stickyNoteAddRequest).subscribe(success => {
-
-    }, error => {
-      console.log(error);
-    });
+    return this.http.put<StickyNoteAddRequest>(this.baseUrl + 'MiroWebPlugin/AddStickyNote', stickyNoteAddRequest);
   }
 }

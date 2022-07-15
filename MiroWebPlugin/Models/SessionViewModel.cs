@@ -2,12 +2,12 @@
 {
     public class SessionViewModel
     {
-        public string SessionId { get; set; }
+        public int SessionId { get; set; }
         public List<Item> InputFields { get; set; }
 
         public SessionViewModel()
         {
-            SessionId = string.Empty;
+            SessionId = -1;
             InputFields = new List<Item>();
         }
 

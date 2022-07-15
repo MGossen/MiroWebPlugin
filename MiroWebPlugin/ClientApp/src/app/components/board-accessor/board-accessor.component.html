@@ -1,11 +1,17 @@
 <p>board-accessor works!</p>
 <p>deine ID: <span><strong>{{this.id}}</strong></span></p>
 <hr />
+
 <div *ngIf="this.inputFields.length > 0">
-  <div *ngFor="let item of this.inputFields">
+  <div *ngFor="let item of this.inputFields; let i = index">
     <label>{{this.getTitle(item)}}</label>
     <div class="input-group">
-      <input class="form-control" (keyup.enter)="addStickyNote(item.id, $event)" type="text" />
+      <input class="form-control" (keyup.enter)="addStickyNote(item.id, $event )" type="text" />
     </div>
+    <hr />
   </div>
+</div>
+
+<div *ngIf="this.inputFields.length <= 0">
+  <h4>No InputFields found!</h4>
 </div>

@@ -7,7 +7,7 @@ namespace MiroWebPlugin.Provider
     {
         int InitFields(string[] itemIds);
         void AddStickyNote(StickyNoteAddRequest request);
-        List<Item> GetLoadedInputFields();
+        List<Item> GetLoadedInputFields(int sessionId);
     }
     public class InputFieldProvider : IInputFieldProvider
     {
@@ -18,12 +18,10 @@ namespace MiroWebPlugin.Provider
             _miroApiServiceWrapper = miroApiServiceWrapper;
         }
 
-        private string[] _inputFieldIds = Array.Empty<string>();
         private Dictionary<int, string[]> _sessionCache = new Dictionary<int, string[]>();
         public int InitFields(string[] itemIds)
         {
             var sessionId = new Random().Next(10000, 99999);
-            _inputFieldIds = itemIds;
             _sessionCache[sessionId] = itemIds;
             var inputFields = _miroApiServiceWrapper.GetInputFields(itemIds);
             return sessionId;
@@ -31,25 +29,41 @@ namespace MiroWebPlugin.Provider
 
         public void AddStickyNote(StickyNoteAddRequest request)
         {
-            if (_inputFieldIds.Length <= 0)
-                throw new Exception("No Input Fields Initialized!");
-
-            if (!_inputFieldIds.Contains(request.ParentId))
-                throw new Exception("Selected Input Field no longer available");
-
-            var inputField = _miroApiServiceWrapper.GetInputField(request.ParentId);
-
-            if(inputField != null)
+            if (_sessionCache.TryGetValue(request.SessionId, out var inputFieldIds))
             {
-                _miroApiServiceWrapper.AddStickyNote(request, inputField);
+                if (inputFieldIds.Length <= 0)
+                    throw new Exception("No Input Fields Initialized!");
+
+                if (!inputFieldIds.Contains(request.ParentId))
+                    throw new Exception("Selected Input Field no longer available");
+
+                var inputField = _miroApiServiceWrapper.GetInputField(request.ParentId);
+
+                if (inputField != null)
+                {
+                    _miroApiServiceWrapper.AddStickyNote(request, inputField);
+                }
+                else
+                {
+                    throw new Exception("Referenced Input Field Not Found!");
+                }
             }
-            throw new Exception("Referenced Input Field Not Found!");
+            else
+            {
+                throw new Exception($"Session '{request.SessionId}' not active!");
+            }
+
+            
         }
 
-        public List<Item> GetLoadedInputFields()
+        public List<Item> GetLoadedInputFields(int sessionId)
         {
-            var inputFields = _miroApiServiceWrapper.GetInputFields(_inputFieldIds);
-            return inputFields;
+            if (_sessionCache.TryGetValue(sessionId, out var inputFieldIds))
+            {
+                var inputFields = _miroApiServiceWrapper.GetInputFields(inputFieldIds);
+                return inputFields;
+            }
+            return new List<Item>();
         }
     }
 }
