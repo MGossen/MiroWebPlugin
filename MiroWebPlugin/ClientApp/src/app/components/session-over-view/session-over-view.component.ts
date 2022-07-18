@@ -22,4 +22,8 @@ export class SessionOverViewComponent implements OnInit {
        this.sessionLink = this.baseURL + 'board/' + this.sessionId;
     });
   }
+
+  getSessionLink(): string {
+    return this.sessionLink;
+  }
 }

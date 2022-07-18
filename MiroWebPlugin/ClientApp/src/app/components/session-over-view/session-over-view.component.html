@@ -3,4 +3,5 @@
   <h3>{{this.sessionId}}</h3>
   <p>Join the Session on:</p>
   <a href="{{this.sessionLink}}"> {{this.sessionLink}}</a>
+  <qr-code [value]="getSessionLink()"></qr-code>
 </div>
