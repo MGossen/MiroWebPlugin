@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Item } from '../../models/item';
+import { SimpleStickyNote } from '../../models/simple-sticky-note';
 import { MiroWebPluginService } from '../../services/miro-web-plugin.service';
 
 @Component({
@@ -12,10 +13,12 @@ export class BoardAccessorComponent implements OnInit {
 
   public id: number;
   public inputFields: Item[];
+  public addedStickyNotes: SimpleStickyNote[];
   private sub: any;
   constructor(private route: ActivatedRoute, private miroSvc: MiroWebPluginService) {
     this.id = -1
     this.inputFields = [];
+    this.addedStickyNotes = [];
   }
 
   ngOnInit(): void {
@@ -31,8 +34,12 @@ export class BoardAccessorComponent implements OnInit {
   public addStickyNote(itemId: string, event: any) {
     let content = event.target.value;
     if (content !== '') {
-      this.miroSvc.addStickyNote(itemId, content, this.id).subscribe(success => {
-
+      this.miroSvc.addStickyNote(itemId, content, this.id).subscribe(id => {
+        var ssn = new SimpleStickyNote();
+        ssn.id = id as unknown as string;
+        ssn.content = content;
+        ssn.parentId = itemId;
+        this.addedStickyNotes.push(ssn);
       }, error => {
         console.log(error);
       });;
@@ -47,5 +54,13 @@ export class BoardAccessorComponent implements OnInit {
       return item.data.content;
     }
     return item.id;
+  }
+  public removeStickyNote(id: string) {
+
+    this.miroSvc.removeStickyNote(id).subscribe(success => {
+        this.addedStickyNotes = this.addedStickyNotes.filter(x => x.id !== id);
+    }, error => {
+      console.log(error);
+    });
   }
 }

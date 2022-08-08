@@ -36,8 +36,10 @@ namespace MiroWebPlugin.Controllers
         [HttpPut("[action]")]
         public IActionResult AddStickyNote([FromBody] StickyNoteAddRequest request)
         {
-            _inputFieldProvider.AddStickyNote(request);
-            return new NoContentResult();
+            string id = _inputFieldProvider.AddStickyNote(request);
+            var result = new AddStickyNoteResult();
+            result.Id = id;
+            return new ObjectResult(result);
         }
 
         [HttpGet("[action]/{sessionId:int}")]
@@ -47,6 +49,12 @@ namespace MiroWebPlugin.Controllers
             sessionViewModel.SessionId = sessionId;
             sessionViewModel.InputFields = _inputFieldProvider.GetLoadedInputFields(sessionId);
             return new ObjectResult(sessionViewModel);
+        }
+        [HttpDelete("[action]/{id}")]
+        public IActionResult DeleteStickyNote(string id)
+        {
+            _inputFieldProvider.DeleteStickyNote(id);
+            return new NoContentResult();
         }
     }
 }

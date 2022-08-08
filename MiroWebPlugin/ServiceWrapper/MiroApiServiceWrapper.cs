@@ -8,7 +8,8 @@ namespace MiroWebPlugin.ServiceWrapper
     {
         List<Item> GetInputFields(string[] ids);
         Item GetInputField(string id);
-        void AddStickyNote(StickyNoteAddRequest request, Item inputField);
+        string AddStickyNote(StickyNoteAddRequest request, Item inputField);
+        void DeleteStickyNote(string id);
     }
 
     public class MiroApiServiceWrapper : IMiroApiServiceWrapper
@@ -16,7 +17,7 @@ namespace MiroWebPlugin.ServiceWrapper
         private static readonly string token = "eyJtaXJvLm9yaWdpbiI6ImV1MDEifQ_UNuxX7CoZErAQ7FfF-hyMhfThWU";
         private static readonly string boardId = "uXjVOn0-sLo%3D"; // uXjVOn0-sLo=
 
-        public void AddStickyNote(StickyNoteAddRequest request, Item inputField)
+        public string AddStickyNote(StickyNoteAddRequest request, Item inputField)
         {
             var url = $"https://api.miro.com/v2/boards/{boardId}/sticky_notes";
             var httpRequest = (HttpWebRequest)WebRequest.Create(url);
@@ -56,8 +57,9 @@ namespace MiroWebPlugin.ServiceWrapper
             var httpResponse = (HttpWebResponse)httpRequest.GetResponse();
             using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
             {
-                var result = streamReader.ReadToEnd();
-                
+                var sr = streamReader.ReadToEnd();
+                Result result = JsonConvert.DeserializeObject<Result>(sr);
+                return result.id;
             }
         }
 
@@ -156,6 +158,25 @@ namespace MiroWebPlugin.ServiceWrapper
                 throw;
             }
             return result;
+        }
+
+        public void DeleteStickyNote(string id)
+        {
+            try
+            {
+                var url = $"https://api.miro.com/v2/boards/{boardId}/sticky_notes/{id}";
+                var httpRequest = (HttpWebRequest)WebRequest.Create(url);
+                httpRequest.Method = "DELETE";
+
+                httpRequest.Headers["Authorization"] = $"Bearer {token}";
+                httpRequest.ContentType = "application/json";
+
+                var httpResponse = (HttpWebResponse)httpRequest.GetResponse();
+            }
+            catch 
+            {
+                throw;
+            }
         }
     }
 }

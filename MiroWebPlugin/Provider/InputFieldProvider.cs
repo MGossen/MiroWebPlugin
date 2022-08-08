@@ -6,8 +6,9 @@ namespace MiroWebPlugin.Provider
     public interface IInputFieldProvider
     {
         int InitFields(string[] itemIds);
-        void AddStickyNote(StickyNoteAddRequest request);
+        string AddStickyNote(StickyNoteAddRequest request);
         List<Item> GetLoadedInputFields(int sessionId);
+        void DeleteStickyNote(string id);
     }
     public class InputFieldProvider : IInputFieldProvider
     {
@@ -27,7 +28,7 @@ namespace MiroWebPlugin.Provider
             return sessionId;
         }
 
-        public void AddStickyNote(StickyNoteAddRequest request)
+        public string AddStickyNote(StickyNoteAddRequest request)
         {
             if (_sessionCache.TryGetValue(request.SessionId, out var inputFieldIds))
             {
@@ -41,7 +42,8 @@ namespace MiroWebPlugin.Provider
 
                 if (inputField != null)
                 {
-                    _miroApiServiceWrapper.AddStickyNote(request, inputField);
+                   var id =  _miroApiServiceWrapper.AddStickyNote(request, inputField);
+                    return id;
                 }
                 else
                 {
@@ -64,6 +66,11 @@ namespace MiroWebPlugin.Provider
                 return inputFields;
             }
             return new List<Item>();
+        }
+
+        public void DeleteStickyNote(string id)
+        {
+            _miroApiServiceWrapper.DeleteStickyNote(id);
         }
     }
 }
