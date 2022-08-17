@@ -14,8 +14,8 @@ namespace MiroWebPlugin.ServiceWrapper
 
     public class MiroApiServiceWrapper : IMiroApiServiceWrapper
     {
-        private static readonly string token = "eyJtaXJvLm9yaWdpbiI6ImV1MDEifQ_UNuxX7CoZErAQ7FfF-hyMhfThWU";
-        private static readonly string boardId = "uXjVOn0-sLo%3D"; // uXjVOn0-sLo=
+        private static readonly string token = "Token as string here";
+        private static readonly string boardId = "borard id here"; // special characters need to be encoded, e.g. 'aXjVOn0-sLo=' becomes 'aXjVOn0-sLo%3D'
 
         public string AddStickyNote(StickyNoteAddRequest request, Item inputField)
         {
